@@ -1,2 +1,8 @@
+.pnp.cjs
+.pnp.loader.mjs
+.yarn/
+yarn.lock
+.wrangler/
+
 node_modules
 build
