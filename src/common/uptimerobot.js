@@ -28,7 +28,6 @@ export async function GetMonitors(apikey, days) {
   const response = await axios.post('https://api.uptimerobot.com/v2/getMonitors', postdata, { timeout: 10000 });
   if (response.data.stat !== 'ok') throw response.data.error;
   return response.data.monitors.map((monitor) => {
-
     const ranges = monitor.custom_uptime_ranges.split('-');
     const average = formatNumber(ranges.pop());
     const daily = [];
@@ -58,13 +57,14 @@ export async function GetMonitors(apikey, days) {
       name: monitor.friendly_name,
       url: monitor.url,
       average: average,
-      daily: daily,
+      daily: daily.reverse(),
       total: total,
       status: 'unknow',
     };
 
     if (monitor.status === 2) result.status = 'ok';
     if (monitor.status === 9) result.status = 'down';
+
     return result;
   });
 }

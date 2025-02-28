@@ -1,4 +1,5 @@
 $primary-color: #3bd672;
+$footer-color: #556f91;
 
 * {
   margin: 0;
@@ -169,6 +170,6 @@ a {
   color: #969ea8;
   a {
     font-weight: bold;
-    color: $primary-color;
+    color: $footer-color;
   }
 }
