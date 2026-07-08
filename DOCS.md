@@ -91,6 +91,7 @@ npm run build
 | `ShowLink` | `boolean` | `false` | 是否在监控项旁边显示站点链接 |
 | `Navi` | `Array<{text, url}>` | `[]` | 导航栏菜单项 |
 | `ApiBaseUrl` | `string` | `'https://api.uptimerobot.com'` | API 地址，可配置为自建代理地址 |
+| `ApiTimeout` | `number` | `60000` | API 请求超时时间（毫秒），默认 60 秒 |
 
 ### 导航菜单配置示例
 

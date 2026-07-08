@@ -23,4 +23,7 @@ window.Config = {
   // 如需使用自建代理，请修改为你的代理地址
   // 示例: 'https://your-proxy.example.com'
   ApiBaseUrl: 'https://api.uptimerobot.com',
+
+  // API 请求超时时间（毫秒），默认 60000（60秒）
+  ApiTimeout: 60000,
 };

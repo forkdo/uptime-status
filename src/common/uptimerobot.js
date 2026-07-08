@@ -26,7 +26,19 @@ export async function GetMonitors(apikey, days) {
   };
 
   const baseUrl = window.Config?.ApiBaseUrl || 'https://api.uptimerobot.com';
-  const response = await axios.post(`${baseUrl}/v2/getMonitors`, postdata, { timeout: 10000 });
+  const timeout = window.Config?.ApiTimeout || 60000;
+  let response;
+  try {
+    response = await axios.post(`${baseUrl}/v2/getMonitors`, postdata, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      timeout,
+    });
+  } catch (err) {
+    console.error('UptimeRobot API Error:', err.message);
+    throw err;
+  }
   if (response.data.stat !== 'ok') throw response.data.error;
   return response.data.monitors.map((monitor) => {
     const ranges = monitor.custom_uptime_ranges.split('-');

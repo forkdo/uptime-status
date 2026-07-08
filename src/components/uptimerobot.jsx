@@ -15,10 +15,19 @@ function UptimeRobot({ apikey }) {
   const { CountDays, ShowLink } = window.Config;
 
   const [monitors, setMonitors] = useState();
+  const [error, setError] = useState();
 
   useEffect(() => {
-    GetMonitors(apikey, CountDays).then(setMonitors);
+    GetMonitors(apikey, CountDays).then(setMonitors).catch(setError);
   }, [apikey, CountDays]);
+
+  if (error) return (
+    <div className='site'>
+      <div className='meta'>
+        <span className='status down'>加载失败: {error.message || String(error)}</span>
+      </div>
+    </div>
+  );
 
   if (monitors) return monitors.map((site) => (
     <div key={site.id} className='site'>
