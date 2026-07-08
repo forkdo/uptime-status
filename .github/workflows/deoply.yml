@@ -37,24 +37,44 @@ jobs:
       - uses: actions/checkout@v7
       - name: Set config.js
         run: |
-          if [[ -n "${{ vars.SITE_NAME }}" ]]; then
-            sed -i "s#SiteName: .*#SiteName: '${{ vars.SITE_NAME }}',#" public/config.js
-          fi
-          if [[ -n "${{ vars.API_KEYS }}" ]]; then
-            formatted=$(echo "${{ vars.API_KEYS }}" | sed 's/,/\n/g' | sed "s/^/'/g" | sed "s/$/',/g" | tr '\n' ' ')
-            sed -i "/ApiKeys: \[/a \\$formatted" public/config.js
-          fi
-          if [[ -n "${{ vars.SHOW_LINK }}" ]]; then
-            sed -i "s#ShowLink: .*#ShowLink: ${{ vars.SHOW_LINK }},#" public/config.js
-          fi
-          if [[ -n "${{ vars.API_BASE_URL }}" ]]; then
-            sed -i "s#ApiBaseUrl: .*#ApiBaseUrl: '${{ vars.API_BASE_URL }}',#" public/config.js
-          fi
-          if [[ -n "${{ vars.NAV_ITEMS }}" ]]; then
-            echo "${{ vars.NAV_ITEMS }}" > content.txt
-            sed '/Navi: \[/r content.txt' public/config.js > temp.txt
-            mv temp.txt public/config.js
-          fi
+          node -e "
+            const fs = require('fs');
+            let config = fs.readFileSync('public/config.js', 'utf8');
+            const vars = {
+              SITE_NAME: '${{ vars.SITE_NAME }}',
+              API_KEYS: '${{ vars.API_KEYS }}',
+              SHOW_LINK: '${{ vars.SHOW_LINK }}',
+              API_BASE_URL: '${{ vars.API_BASE_URL }}',
+              API_TIMEOUT: '${{ vars.API_TIMEOUT }}',
+              COUNT_DAYS: '${{ vars.COUNT_DAYS }}',
+              NAV_ITEMS: '${{ vars.NAV_ITEMS }}'
+            };
+            if (vars.SITE_NAME) {
+              config = config.replace(/SiteName: .*/, \"SiteName: '\" + vars.SITE_NAME + \"',\");
+            }
+            if (vars.API_KEYS) {
+              const keys = vars.API_KEYS.split(',').map(k => \"    '\" + k.trim() + \"'\").join(',\\n');
+              config = config.replace(/ApiKeys: \[[\s\S]*?\]/, 'ApiKeys: [\\n' + keys + '\\n  ]');
+            }
+            if (vars.SHOW_LINK) {
+              config = config.replace(/ShowLink: .*/, 'ShowLink: ' + vars.SHOW_LINK + ',');
+            }
+            if (vars.API_BASE_URL) {
+              config = config.replace(/ApiBaseUrl: .*/, \"ApiBaseUrl: '\" + vars.API_BASE_URL + \"',\");
+            }
+            if (vars.API_TIMEOUT) {
+              config = config.replace(/ApiTimeout: .*/, 'ApiTimeout: ' + vars.API_TIMEOUT + ',');
+            }
+            if (vars.COUNT_DAYS) {
+              config = config.replace(/CountDays: .*/, 'CountDays: ' + vars.COUNT_DAYS + ',');
+            }
+            if (vars.NAV_ITEMS) {
+              const navItems = JSON.parse(vars.NAV_ITEMS);
+              const naviArray = navItems.map(item => '    { text: \\'' + item.text + '\\', url: \\'' + item.url + '\\'}').join(',\\n');
+              config = config.replace(/Navi: \[[\s\S]*?\]/, 'Navi: [\\n' + naviArray + '\\n  ]');
+            }
+            fs.writeFileSync('public/config.js', config);
+          "
       - uses: actions/setup-node@v6
         with:
           node-version: 20
