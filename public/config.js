@@ -14,11 +14,6 @@ window.Config = {
   // 是否显示检测站点的链接
   ShowLink: false,
 
-  // 导航栏菜单
-  Navi: [
-    
-  ],
-
   // UptimeRobot API 地址，默认为官方地址
   // 如需使用自建代理，请修改为你的代理地址
   // 示例: 'https://your-proxy.example.com'
@@ -26,4 +21,9 @@ window.Config = {
 
   // API 请求超时时间（毫秒），默认 60000（60秒）
   ApiTimeout: 60000,
+
+  // 导航栏菜单
+  Navi: [
+    
+  ],
 };

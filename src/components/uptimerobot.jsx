@@ -40,27 +40,45 @@ function UptimeRobot({ apikey }) {
         {site.daily.map((data, index) => {
           let status = '';
           let text = data.date.format('YYYY-MM-DD ');
-          if (data.uptime >= 100) {
-            status = 'ok';
-            text += `可用率 ${formatNumber(data.uptime)}%`;
-          }
-          else if (data.uptime <= 0 && data.down.times === 0) {
+          let bgColor = '#e5e8eb'; // 默认灰色（无数据）
+
+          if (data.uptime === null) {
             status = 'none';
+            bgColor = '#e5e8eb';
             text += '无数据';
+          }
+          else if (data.uptime >= 100) {
+            status = 'ok';
+            bgColor = '#3bd672';
+            text += `可用率 ${formatNumber(data.uptime)}%`;
           }
           else {
             status = 'down';
+            // 渐变：绿色 → 黄绿 → 黄色 → 橙色 → 褐色 → 红色
+            const u = data.uptime;
+            let hue;
+            if (u >= 99) hue = 100 - (100 - u) * 20;       // 99-100%: 80-100
+            else if (u >= 95) hue = 80 - (99 - u) * 5;     // 95-99%: 60-80
+            else if (u >= 80) hue = 60 - (95 - u) * 2;     // 80-95%: 30-60
+            else if (u >= 50) hue = 30 - (80 - u) * 0.5;   // 50-80%: 15-30
+            else if (u >= 20) hue = 15 - (50 - u) * 0.5;   // 20-50%: 0-15
+            else hue = 0;                                    // 0-20%: 红色
+            // 非常低的可用率用褐色（降低饱和度）
+            const sat = u < 30 ? 60 + (u / 30) * 20 : 80;
+            bgColor = `hsl(${Math.max(0, hue)}, ${sat}%, 45%)`;
             text += `故障 ${data.down.times} 次，累计 ${formatDuration(data.down.duration)}，可用率 ${formatNumber(data.uptime)}%`;
           }
-          return (<i key={index} className={status} data-tooltip-id='tooltip' data-tooltip-content={text} />)
+          return (<i key={index} className={status} style={{ backgroundColor: bgColor }} data-tooltip-id='tooltip' data-tooltip-content={text} />)
         })}
       </div>
       <div className='summary'>
         <span>{site.daily[0].date.format('YYYY-MM-DD')}</span>
         <span>
-          {site.total.times
-            ? `最近 ${CountDays} 天故障 ${site.total.times} 次，累计 ${formatDuration(site.total.duration)}，平均可用率 ${site.average}%`
-            : `最近 ${CountDays} 天可用率 ${site.average}%`}
+          {site.average !== null
+            ? site.total.times > 0
+              ? `最近 ${CountDays} 天故障 ${site.total.times} 次，累计 ${formatDuration(site.total.duration)}，平均可用率 ${site.average}%`
+              : `最近 ${CountDays} 天可用率 ${site.average}%`
+            : '无数据'}
         </span>
         <span>今天</span>
       </div>

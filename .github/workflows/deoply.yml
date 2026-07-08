@@ -44,9 +44,6 @@ jobs:
             formatted=$(echo "${{ vars.API_KEYS }}" | sed 's/,/\n/g' | sed "s/^/'/g" | sed "s/$/',/g" | tr '\n' ' ')
             sed -i "/ApiKeys: \[/a \\$formatted" public/config.js
           fi
-          if [[ -n "${{ vars.COUNT_DAYS }}" ]]; then
-            sed -i "s#CountDays: .*#CountDays: ${{ vars.COUNT_DAYS }},#" public/config.js
-          fi
           if [[ -n "${{ vars.SHOW_LINK }}" ]]; then
             sed -i "s#ShowLink: .*#ShowLink: ${{ vars.SHOW_LINK }},#" public/config.js
           fi

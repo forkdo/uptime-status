@@ -135,7 +135,6 @@ window.Config = {
 |--------|------|--------|
 | `SITE_NAME` | 站点显示名称 | `My Site Status` |
 | `API_KEYS` | API Key 列表，逗号分隔 | `key1,key2,key3` |
-| `COUNT_DAYS` | 显示日志天数 | `90` |
 | `SHOW_LINK` | 是否显示链接 | `true` 或 `false` |
 | `API_BASE_URL` | API 地址 | `https://your-proxy.example.com` |
 | `NAV_ITEMS` | 导航菜单 JSON | 见下方示例 |
@@ -154,12 +153,6 @@ window.Config = {
 
 ```
 m123456-abcdef1234567890,m987654-abcdef1234567890
-```
-
-#### COUNT_DAYS
-
-```
-90
 ```
 
 #### SHOW_LINK
@@ -372,10 +365,6 @@ $footer-color: #556f91;     // 页脚链接颜色
 1. 检查 `config.js` 中的 `ApiKeys` 是否正确填写
 2. 打开浏览器开发者工具查看是否有 API 请求报错
 3. 确认 API Key 是否有效且有对应的监控项
-
-### Q: CountDays 设置多少合适？
-
-建议设置为 60 或 90，这样可以展示约 2-3 个月的状态，视觉效果较好。
 
 ### Q: 如何添加多个监控？
 
