@@ -36,40 +36,39 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Set config.js
+        env:
+          SITE_NAME: ${{ vars.SITE_NAME }}
+          API_KEYS: ${{ vars.API_KEYS }}
+          SHOW_LINK: ${{ vars.SHOW_LINK }}
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+          API_TIMEOUT: ${{ vars.API_TIMEOUT }}
+          COUNT_DAYS: ${{ vars.COUNT_DAYS }}
+          NAV_ITEMS: ${{ vars.NAV_ITEMS }}
         run: |
           node -e "
             const fs = require('fs');
             let config = fs.readFileSync('public/config.js', 'utf8');
-            const vars = {
-              SITE_NAME: '${{ vars.SITE_NAME }}',
-              API_KEYS: '${{ vars.API_KEYS }}',
-              SHOW_LINK: '${{ vars.SHOW_LINK }}',
-              API_BASE_URL: '${{ vars.API_BASE_URL }}',
-              API_TIMEOUT: '${{ vars.API_TIMEOUT }}',
-              COUNT_DAYS: '${{ vars.COUNT_DAYS }}',
-              NAV_ITEMS: '${{ vars.NAV_ITEMS }}'
-            };
-            if (vars.SITE_NAME) {
-              config = config.replace(/SiteName: .*/, \"SiteName: '\" + vars.SITE_NAME + \"',\");
+            if (process.env.SITE_NAME) {
+              config = config.replace(/SiteName: .*/, \"SiteName: '\" + process.env.SITE_NAME + \"',\");
             }
-            if (vars.API_KEYS) {
-              const keys = vars.API_KEYS.split(',').map(k => \"    '\" + k.trim() + \"'\").join(',\\n');
+            if (process.env.API_KEYS) {
+              const keys = process.env.API_KEYS.split(',').map(k => \"    '\" + k.trim() + \"'\").join(',\\n');
               config = config.replace(/ApiKeys: \[[\s\S]*?\]/, 'ApiKeys: [\\n' + keys + '\\n  ]');
             }
-            if (vars.SHOW_LINK) {
-              config = config.replace(/ShowLink: .*/, 'ShowLink: ' + vars.SHOW_LINK + ',');
+            if (process.env.SHOW_LINK) {
+              config = config.replace(/ShowLink: .*/, 'ShowLink: ' + process.env.SHOW_LINK + ',');
             }
-            if (vars.API_BASE_URL) {
-              config = config.replace(/ApiBaseUrl: .*/, \"ApiBaseUrl: '\" + vars.API_BASE_URL + \"',\");
+            if (process.env.API_BASE_URL) {
+              config = config.replace(/ApiBaseUrl: .*/, \"ApiBaseUrl: '\" + process.env.API_BASE_URL + \"',\");
             }
-            if (vars.API_TIMEOUT) {
-              config = config.replace(/ApiTimeout: .*/, 'ApiTimeout: ' + vars.API_TIMEOUT + ',');
+            if (process.env.API_TIMEOUT) {
+              config = config.replace(/ApiTimeout: .*/, 'ApiTimeout: ' + process.env.API_TIMEOUT + ',');
             }
-            if (vars.COUNT_DAYS) {
-              config = config.replace(/CountDays: .*/, 'CountDays: ' + vars.COUNT_DAYS + ',');
+            if (process.env.COUNT_DAYS) {
+              config = config.replace(/CountDays: .*/, 'CountDays: ' + process.env.COUNT_DAYS + ',');
             }
-            if (vars.NAV_ITEMS) {
-              const navItems = JSON.parse(vars.NAV_ITEMS);
+            if (process.env.NAV_ITEMS) {
+              const navItems = JSON.parse(process.env.NAV_ITEMS);
               const naviArray = navItems.map(item => '    { text: \\'' + item.text + '\\', url: \\'' + item.url + '\\'}').join(',\\n');
               config = config.replace(/Navi: \[[\s\S]*?\]/, 'Navi: [\\n' + naviArray + '\\n  ]');
             }
