@@ -18,4 +18,9 @@ window.Config = {
   Navi: [
     
   ],
+
+  // UptimeRobot API 地址，默认为官方地址
+  // 如需使用自建代理，请修改为你的代理地址
+  // 示例: 'https://your-proxy.example.com'
+  ApiBaseUrl: 'https://api.uptimerobot.com',
 };
